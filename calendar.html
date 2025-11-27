@@ -51,6 +51,29 @@
             padding-bottom: 10px;
         }
         
+        .submit-event-btn {
+            display: block;
+            width: 90%;
+            max-width: 400px;
+            margin: 20px auto;
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #4caf50, #45a049);
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            font-size: 18px;
+            font-weight: 600;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+            transition: all 0.3s;
+        }
+        
+        .submit-event-btn:hover {
+            background: linear-gradient(135deg, #45a049, #3d8b40);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(76, 175, 80, 0.4);
+        }
+        
         .legend {
             position: sticky;
             top: 90px;
@@ -286,6 +309,8 @@
         <h1>Sunshine Coast Baha'i Community</h1>
         <div class="subtitle">Summer Expansion Calendar</div>
         
+        <a href="https://auralsculpture.github.io/sunshine-coast-calendar/event-form.html" class="submit-event-btn">? Submit Your Event</a>
+        
         <div class="legend">
             <div class="legend-item">
                 <div class="legend-color" style="background: #fff9c4;"></div>
@@ -465,7 +490,7 @@ document.getElementById('popupOverlay').onclick = closePopup;
         // Generate calendar first
         generateCalendar();
         
-// Auto-scroll to current month after calendar is rendered
+        // Auto-scroll to current month after calendar is rendered
         setTimeout(function() {
             const now = new Date();
             const currentYear = now.getFullYear();
@@ -480,15 +505,10 @@ document.getElementById('popupOverlay').onclick = closePopup;
             const monthHeaders = document.querySelectorAll('.month-header');
             monthHeaders.forEach(header => {
                 if (header.textContent.trim() === targetMonthName) {
-                    // Get the position of the month header
-                    const headerTop = header.getBoundingClientRect().top + window.pageYOffset;
-                    // Subtract the height of sticky elements (approx 160px) so month appears below them
-                    const scrollToPosition = headerTop - 180;
-                    
-                    window.scrollTo({ 
-                        top: scrollToPosition, 
-                        behavior: 'smooth' 
-                    });
+                    // Scroll smoothly to this month, with some offset for the legend
+                    header.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    // Add a bit of extra space at the top so the month header isn't right at the edge
+                    setTimeout(() => window.scrollBy(0, -20), 300);
                 }
             });
         }, 100); // Small delay to ensure calendar DOM is fully rendered
