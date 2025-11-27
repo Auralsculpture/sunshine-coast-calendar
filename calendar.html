@@ -465,7 +465,7 @@ document.getElementById('popupOverlay').onclick = closePopup;
         // Generate calendar first
         generateCalendar();
         
-        // Auto-scroll to current month after calendar is rendered
+// Auto-scroll to current month after calendar is rendered
         setTimeout(function() {
             const now = new Date();
             const currentYear = now.getFullYear();
@@ -480,10 +480,15 @@ document.getElementById('popupOverlay').onclick = closePopup;
             const monthHeaders = document.querySelectorAll('.month-header');
             monthHeaders.forEach(header => {
                 if (header.textContent.trim() === targetMonthName) {
-                    // Scroll smoothly to this month, with some offset for the legend
-                    header.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                    // Add a bit of extra space at the top so the month header isn't right at the edge
-                    setTimeout(() => window.scrollBy(0, -20), 300);
+                    // Get the position of the month header
+                    const headerTop = header.getBoundingClientRect().top + window.pageYOffset;
+                    // Subtract the height of sticky elements (approx 160px) so month appears below them
+                    const scrollToPosition = headerTop - 180;
+                    
+                    window.scrollTo({ 
+                        top: scrollToPosition, 
+                        behavior: 'smooth' 
+                    });
                 }
             });
         }, 100); // Small delay to ensure calendar DOM is fully rendered
