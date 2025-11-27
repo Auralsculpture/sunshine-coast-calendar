@@ -325,7 +325,7 @@
                 <span>Camp</span>
             </div>
             <div class="legend-item">
-                <div class="legend-color" style="background: #b3e5fc;"></div>
+                <div class="legend-color" style="background: #b3e6c9;"></div>
                 <span>Social Action</span>
             </div>
             <div class="legend-item">
@@ -485,7 +485,7 @@
             return days[date.getDay()] + ', ' + date.getDate() + ' ' + months[date.getMonth()] + ' ' + date.getFullYear();
         }
         
-document.getElementById('popupOverlay').onclick = closePopup;
+        document.getElementById('popupOverlay').onclick = closePopup;
         
         // Generate calendar first
         generateCalendar();
@@ -505,10 +505,15 @@ document.getElementById('popupOverlay').onclick = closePopup;
             const monthHeaders = document.querySelectorAll('.month-header');
             monthHeaders.forEach(header => {
                 if (header.textContent.trim() === targetMonthName) {
-                    // Scroll smoothly to this month, with some offset for the legend
-                    header.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                    // Add a bit of extra space at the top so the month header isn't right at the edge
-                    setTimeout(() => window.scrollBy(0, -20), 300);
+                    // Get the position of the month header
+                    const headerTop = header.getBoundingClientRect().top + window.pageYOffset;
+                    // Subtract the height of sticky elements (approx 160px) so month appears below them
+                    const scrollToPosition = headerTop - 180;
+                    
+                    window.scrollTo({ 
+                        top: scrollToPosition, 
+                        behavior: 'smooth' 
+                    });
                 }
             });
         }, 100); // Small delay to ensure calendar DOM is fully rendered
