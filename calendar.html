@@ -444,9 +444,33 @@
             return days[date.getDay()] + ', ' + date.getDate() + ' ' + months[date.getMonth()] + ' ' + date.getFullYear();
         }
         
-        document.getElementById('popupOverlay').onclick = closePopup;
+document.getElementById('popupOverlay').onclick = closePopup;
         
+        // Generate calendar first
         generateCalendar();
+        
+        // Auto-scroll to current month after calendar is rendered
+        setTimeout(function() {
+            const now = new Date();
+            const currentYear = now.getFullYear();
+            const currentMonth = now.getMonth(); // 0-11
+            const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 
+                              'July', 'August', 'September', 'October', 'November', 'December'];
+            
+            // Build the month name we're looking for (e.g., "November 2025")
+            const targetMonthName = monthNames[currentMonth] + ' ' + currentYear;
+            
+            // Find all month headers
+            const monthHeaders = document.querySelectorAll('.month-header');
+            monthHeaders.forEach(header => {
+                if (header.textContent.trim() === targetMonthName) {
+                    // Scroll smoothly to this month, with some offset for the legend
+                    header.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    // Add a bit of extra space at the top so the month header isn't right at the edge
+                    setTimeout(() => window.scrollBy(0, -20), 300);
+                }
+            });
+        }, 100); // Small delay to ensure calendar DOM is fully rendered
     </script>
 </body>
 </html>
