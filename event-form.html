@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Summer Expansion - Event Submission</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #673ab7, #512da8);
+            color: white;
+            padding: 30px;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+        
+        .header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+        
+        .form-content {
+            padding: 30px;
+        }
+        
+        .field-group {
+            margin-bottom: 28px;
+        }
+        
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+        }
+        
+        label .required {
+            color: #d32f2f;
+        }
+        
+        .field-help {
+            font-size: 13px;
+            color: #666;
+            margin-top: 4px;
+        }
+        
+        input[type="text"],
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+        
+        input[type="text"]:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #673ab7;
+            box-shadow: 0 0 0 2px rgba(103, 58, 183, 0.1);
+        }
+        
+        textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+        
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .radio-option {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .radio-option:hover {
+            background: #f9f9f9;
+            border-color: #673ab7;
+        }
+        
+        .radio-option input[type="radio"] {
+            margin-right: 10px;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+        
+        .radio-option.selected {
+            background: #f3e5f5;
+            border-color: #673ab7;
+        }
+        
+        /* Date Picker Styles */
+        .date-picker-container {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 15px;
+            background: #fafafa;
+        }
+        
+        .date-picker-instructions {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: white;
+            border-left: 3px solid #673ab7;
+        }
+        
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+            margin-top: 10px;
+        }
+        
+        .calendar-header {
+            text-align: center;
+            font-weight: 600;
+            padding: 8px;
+            background: #673ab7;
+            color: white;
+            font-size: 12px;
+        }
+        
+        .calendar-day {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.2s;
+            background: white;
+        }
+        
+        .calendar-day:hover {
+            background: #f3e5f5;
+            border-color: #673ab7;
+        }
+        
+        .calendar-day.selected {
+            background: #673ab7;
+            color: white;
+            border-color: #673ab7;
+        }
+        
+        .calendar-day.in-range {
+            background: #e1bee7;
+            border-color: #ba68c8;
+        }
+        
+        .calendar-day.disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+        
+        .calendar-day.other-month {
+            opacity: 0.4;
+        }
+        
+        .month-navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .month-navigation button {
+            padding: 8px 16px;
+            background: #673ab7;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .month-navigation button:hover {
+            background: #512da8;
+        }
+        
+        .month-navigation button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .current-month {
+            font-weight: 600;
+            font-size: 16px;
+        }
+        
+        .selected-dates-display {
+            margin-top: 15px;
+            padding: 10px;
+            background: white;
+            border-radius: 4px;
+            min-height: 40px;
+        }
+        
+        .selected-dates-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        
+        .selected-dates-list {
+            font-size: 13px;
+            color: #333;
+        }
+        
+        .date-tag {
+            display: inline-block;
+            background: #e1bee7;
+            padding: 4px 8px;
+            margin: 2px;
+            border-radius: 3px;
+            font-size: 12px;
+        }
+        
+        .submit-button {
+            width: 100%;
+            padding: 15px;
+            background: #673ab7;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .submit-button:hover {
+            background: #512da8;
+        }
+        
+        .submit-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .success-message {
+            background: #4caf50;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .error-message {
+            background: #f44336;
+            color: white;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        @media (max-width: 600px) {
+            .calendar-day {
+                font-size: 11px;
+            }
+            
+            .container {
+                border-radius: 0;
+            }
+            
+            body {
+                padding: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Summer Expansion</h1>
+            <p>Submit your community event</p>
+        </div>
+        
+        <div class="form-content">
+            <div class="success-message" id="successMessage">
+                ✓ Event submitted successfully! Thank you.
+            </div>
+            
+            <div class="error-message" id="errorMessage"></div>
+            
+            <form id="eventForm">
+                <!-- Event Name -->
+                <div class="field-group">
+                    <label>Event Name <span class="required">*</span></label>
+                    <input type="text" name="eventName" maxlength="25" required>
+                    <div class="field-help">A title for your event - 25 characters max</div>
+                </div>
+                
+                <!-- Event Type -->
+                <div class="field-group">
+                    <label>What type is your event <span class="required">*</span></label>
+                    <div class="radio-group" id="eventTypeGroup">
+                        <label class="radio-option">
+                            <input type="radio" name="eventType" value="Devotions" required>
+                            <span>Devotions</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="eventType" value="Fireside" required>
+                            <span>Fireside</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="eventType" value="Camp" required>
+                            <span>Camp</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="eventType" value="Social Action" required>
+                            <span>Social Action</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="eventType" value="Study" required>
+                            <span>Study</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="eventType" value="Other" required>
+                            <span>Other</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <!-- Regular or Expansion -->
+                <div class="field-group">
+                    <label>Regular or Expansion? <span class="required">*</span></label>
+                    <div class="radio-group" id="expansionGroup">
+                        <label class="radio-option">
+                            <input type="radio" name="regularOrExpansion" value="Regular" required>
+                            <span>Regular</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="regularOrExpansion" value="Special activity for expansion" required>
+                            <span>Special activity for expansion</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <!-- Date Picker -->
+                <div class="field-group">
+                    <label>What Date is your event? <span class="required">*</span></label>
+                    <div class="date-picker-container">
+                        <div class="date-picker-instructions">
+                            <strong>Click dates to select.</strong> For ranges: click start date, hold Shift, click end date. For recurring events, click each date individually.
+                        </div>
+                        
+                        <div class="month-navigation">
+                            <button type="button" id="prevMonth">← Previous</button>
+                            <span class="current-month" id="currentMonth"></span>
+                            <button type="button" id="nextMonth">Next →</button>
+                        </div>
+                        
+                        <div class="calendar-grid" id="calendarGrid"></div>
+                        
+                        <div class="selected-dates-display">
+                            <div class="selected-dates-label">Selected dates:</div>
+                            <div class="selected-dates-list" id="selectedDatesList">None selected</div>
+                        </div>
+                        
+                        <input type="hidden" name="eventDates" id="eventDates" required>
+                    </div>
+                </div>
+                
+                <!-- Time -->
+                <div class="field-group">
+                    <label>What Time is Your Event? <span class="required">*</span></label>
+                    <div class="radio-group" id="timeGroup">
+                        <label class="radio-option">
+                            <input type="radio" name="eventTime" value="Morning" required>
+                            <span>Morning</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="eventTime" value="Afternoon" required>
+                            <span>Afternoon</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="eventTime" value="Evening" required>
+                            <span>Evening</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="eventTime" value="All day" required>
+                            <span>All day</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <!-- Contact -->
+                <div class="field-group">
+                    <label>Who is the contact for your Event <span class="required">*</span></label>
+                    <input type="text" name="contact" required>
+                    <div class="field-help">This calendar is potentially public. Just a name please</div>
+                </div>
+                
+                <!-- Location -->
+                <div class="field-group">
+                    <label>Where is your event? <span class="required">*</span></label>
+                    <input type="text" name="location" required>
+                    <div class="field-help">This calendar is potentially public. Just a description please, unless it's a public space, eg Webber's Home</div>
+                </div>
+                
+                <!-- Description -->
+                <div class="field-group">
+                    <label>A short description <span class="required">*</span></label>
+                    <textarea name="description" required></textarea>
+                    <div class="field-help">In 5 words or less</div>
+                </div>
+                
+                <!-- Open to Anyone -->
+                <div class="field-group">
+                    <label>Is the event open to anyone? <span class="required">*</span></label>
+                    <div class="field-help">Some events may be limited due to venue or pre-existing relationships</div>
+                    <div class="radio-group" id="openGroup">
+                        <label class="radio-option">
+                            <input type="radio" name="openToAnyone" value="Open" required>
+                            <span>Open</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="openToAnyone" value="Limited capacity, please contact" required>
+                            <span>Limited capacity, please contact</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="openToAnyone" value="Invitation only" required>
+                            <span>Invitation only</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <button type="submit" class="submit-button" id="submitButton">Submit Event</button>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        // Configuration - REPLACE THIS URL with your deployed Apps Script URL
+        const SCRIPT_URL = 'YOUR_APPS_SCRIPT_WEB_APP_URL_HERE';
+        
+        // Date picker state
+        let currentMonth = new Date(2025, 10, 1); // November 2025
+        let selectedDates = new Set();
+        let lastSelectedDate = null;
+        let isSelectingRange = false;
+        
+        // Month names
+        const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+                           'July', 'August', 'September', 'October', 'November', 'December'];
+        
+        // Initialize calendar
+        function renderCalendar() {
+            const grid = document.getElementById('calendarGrid');
+            const monthLabel = document.getElementById('currentMonth');
+            
+            // Clear grid
+            grid.innerHTML = '';
+            
+            // Set month label
+            monthLabel.textContent = `${monthNames[currentMonth.getMonth()]} ${currentMonth.getFullYear()}`;
+            
+            // Add day headers
+            const dayHeaders = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            dayHeaders.forEach(day => {
+                const header = document.createElement('div');
+                header.className = 'calendar-header';
+                header.textContent = day;
+                grid.appendChild(header);
+            });
+            
+            // Get first day of month and number of days
+            const firstDay = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1);
+            const lastDay = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0);
+            const daysInMonth = lastDay.getDate();
+            const startingDayOfWeek = firstDay.getDay();
+            
+            // Add empty cells for days before month starts
+            for (let i = 0; i < startingDayOfWeek; i++) {
+                const emptyDay = document.createElement('div');
+                emptyDay.className = 'calendar-day disabled other-month';
+                grid.appendChild(emptyDay);
+            }
+            
+            // Add days of month
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dateStr = formatDate(new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day));
+                const dayCell = document.createElement('div');
+                dayCell.className = 'calendar-day';
+                dayCell.textContent = day;
+                dayCell.dataset.date = dateStr;
+                
+                if (selectedDates.has(dateStr)) {
+                    dayCell.classList.add('selected');
+                }
+                
+                dayCell.addEventListener('click', (e) => handleDateClick(e, dateStr));
+                grid.appendChild(dayCell);
+            }
+            
+            updateSelectedDatesDisplay();
+        }
+        
+        function formatDate(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+        
+        function handleDateClick(e, dateStr) {
+            if (e.shiftKey && lastSelectedDate) {
+                // Range selection
+                selectDateRange(lastSelectedDate, dateStr);
+            } else {
+                // Toggle single date
+                if (selectedDates.has(dateStr)) {
+                    selectedDates.delete(dateStr);
+                } else {
+                    selectedDates.add(dateStr);
+                }
+                lastSelectedDate = dateStr;
+            }
+            
+            renderCalendar();
+        }
+        
+        function selectDateRange(startStr, endStr) {
+            const start = new Date(startStr);
+            const end = new Date(endStr);
+            
+            // Ensure start is before end
+            const [earlierDate, laterDate] = start < end ? [start, end] : [end, start];
+            
+            // Add all dates in range
+            let current = new Date(earlierDate);
+            while (current <= laterDate) {
+                selectedDates.add(formatDate(current));
+                current.setDate(current.getDate() + 1);
+            }
+        }
+        
+        function updateSelectedDatesDisplay() {
+            const display = document.getElementById('selectedDatesList');
+            const hiddenInput = document.getElementById('eventDates');
+            
+            if (selectedDates.size === 0) {
+                display.innerHTML = 'None selected';
+                hiddenInput.value = '';
+                return;
+            }
+            
+            // Sort dates
+            const sortedDates = Array.from(selectedDates).sort();
+            
+            // Format for display
+            const formatted = sortedDates.map(dateStr => {
+                const date = new Date(dateStr + 'T00:00:00');
+                const day = date.getDate();
+                const month = monthNames[date.getMonth()];
+                return `${day} ${month}`;
+            });
+            
+            display.innerHTML = formatted.map(d => `<span class="date-tag">${d}</span>`).join(' ');
+            
+            // Store in hidden input (comma-separated)
+            hiddenInput.value = sortedDates.join(',');
+        }
+        
+        // Month navigation
+        document.getElementById('prevMonth').addEventListener('click', () => {
+            currentMonth.setMonth(currentMonth.getMonth() - 1);
+            renderCalendar();
+        });
+        
+        document.getElementById('nextMonth').addEventListener('click', () => {
+            currentMonth.setMonth(currentMonth.getMonth() + 1);
+            renderCalendar();
+        });
+        
+        // Radio button visual feedback
+        document.querySelectorAll('.radio-option').forEach(option => {
+            option.addEventListener('click', function() {
+                const radio = this.querySelector('input[type="radio"]');
+                radio.checked = true;
+                
+                // Remove selected class from siblings
+                this.parentElement.querySelectorAll('.radio-option').forEach(opt => {
+                    opt.classList.remove('selected');
+                });
+                
+                // Add selected class to this option
+                this.classList.add('selected');
+            });
+        });
+        
+        // Form submission
+        document.getElementById('eventForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const submitButton = document.getElementById('submitButton');
+            const successMessage = document.getElementById('successMessage');
+            const errorMessage = document.getElementById('errorMessage');
+            
+            // Disable submit button
+            submitButton.disabled = true;
+            submitButton.textContent = 'Submitting...';
+            
+            // Hide messages
+            successMessage.style.display = 'none';
+            errorMessage.style.display = 'none';
+            
+            // Collect form data
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData.entries());
+            
+            try {
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                // Note: no-cors mode means we can't read the response
+                // We assume success if no error is thrown
+                successMessage.style.display = 'block';
+                e.target.reset();
+                selectedDates.clear();
+                lastSelectedDate = null;
+                renderCalendar();
+                
+                // Scroll to success message
+                successMessage.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                
+                // Re-enable button after delay
+                setTimeout(() => {
+                    submitButton.disabled = false;
+                    submitButton.textContent = 'Submit Event';
+                }, 3000);
+                
+            } catch (error) {
+                errorMessage.textContent = 'Error submitting form. Please try again.';
+                errorMessage.style.display = 'block';
+                submitButton.disabled = false;
+                submitButton.textContent = 'Submit Event';
+            }
+        });
+        
+        // Initialize
+        renderCalendar();
+    </script>
+</body>
+</html>
